@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 services:
   db:
@@ -8,6 +8,6 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
     ports:
-      - '5400:5432'
+      - "5400:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./node_modules/data:/var/lib/postgresql/data
