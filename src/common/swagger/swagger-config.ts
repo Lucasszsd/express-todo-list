@@ -14,6 +14,8 @@ const options = {
   apis: [
     path.resolve(__dirname, "../../user/user.router.ts"),
     path.resolve(__dirname, "../../user/entities/user.entity.ts"),
+    path.resolve(__dirname, "../../task/task.router.ts"),
+    path.resolve(__dirname, "../../task/entities/task.entity.ts"),
   ],
 } as swaggerJSDoc.Options;
 
