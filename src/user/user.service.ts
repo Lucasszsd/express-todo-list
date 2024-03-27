@@ -1,3 +1,4 @@
+import { BadRequestException } from "../common/exception/types/bad-request.exception";
 import { NotFoundException } from "../common/exception/types/not-found-exception";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { UserRepository } from "./user.repository";
@@ -9,7 +10,17 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.create(createUserDto);
+    const createUserProps = {
+      name: createUserDto.name ?? undefined,
+      email: createUserDto.email ?? undefined,
+      password: createUserDto.password ?? undefined,
+      weight: createUserDto.weight ?? undefined,
+    } as CreateUserDto;
+
+    if (Object.values(createUserProps).includes(undefined))
+      throw new BadRequestException("Missing required fields on user");
+
+    const user = await this.userRepository.create(createUserProps);
     return user;
   }
 

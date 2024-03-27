@@ -9,7 +9,16 @@ export class TaskService {
   }
 
   async create(createTaskDto: CreateTaskDto) {
-    const Task = await this.taskRepository.create(createTaskDto);
+    const createTaskProps = {
+      title: createTaskDto.title ?? undefined,
+      user_id: createTaskDto.user_id ?? undefined,
+      category_id: createTaskDto.category_id ?? undefined,
+      description: createTaskDto.description ?? undefined,
+      status: createTaskDto.status ?? undefined,
+      priority: createTaskDto.priority ?? undefined,
+    } as CreateTaskDto;
+
+    const Task = await this.taskRepository.create(createTaskProps);
     return Task;
   }
 
