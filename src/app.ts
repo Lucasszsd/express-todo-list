@@ -4,7 +4,8 @@ import swaggerUi from "swagger-ui-express";
 import { specs } from "./common/swagger/swagger-config";
 import { errorMiddleware } from "./common/middlewares/error-handler.middleware";
 import userRoutes from "./user/user.router";
-import routes from "./routes";
+import taskRoutes from "./task/task.router";
+import appRoutes from "./routes";
 
 const prismaClient = new PrismaClient();
 
@@ -24,8 +25,9 @@ export class App {
   }
 
   private routes() {
-    this.app.use(routes);
+    this.app.use(appRoutes);
     this.app.use(userRoutes);
+    this.app.use(taskRoutes);
     this.app.use("/api", swaggerUi.serve, swaggerUi.setup(specs));
   }
 
