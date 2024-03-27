@@ -1,5 +1,3 @@
-Express ou Fastify
-
 check-list:
 [] - Testar as rotas
 [] - Partir para as rotas com regra de negócio
