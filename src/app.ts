@@ -6,6 +6,7 @@ import { errorMiddleware } from "./common/middlewares/error-handler.middleware";
 import userRoutes from "./user/user.router";
 import taskRoutes from "./task/task.router";
 import appRoutes from "./routes";
+import categoryRoutes from "./category/category.router";
 
 const prismaClient = new PrismaClient();
 
@@ -28,6 +29,7 @@ export class App {
     this.app.use(appRoutes);
     this.app.use(userRoutes);
     this.app.use(taskRoutes);
+    this.app.use(categoryRoutes);
     this.app.use("/api", swaggerUi.serve, swaggerUi.setup(specs));
   }
 

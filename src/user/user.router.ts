@@ -94,7 +94,7 @@ userRoutes.get(
 
 /**
  * @swagger
- * /Users/{id}:
+ * /users/{id}:
  *   patch:
  *     summary: Atualiza um usuário existente pelo ID
  *     tags: [Users]

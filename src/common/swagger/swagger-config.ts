@@ -16,6 +16,8 @@ const options = {
     path.resolve(__dirname, "../../user/entities/user.entity.ts"),
     path.resolve(__dirname, "../../task/task.router.ts"),
     path.resolve(__dirname, "../../task/entities/task.entity.ts"),
+    path.resolve(__dirname, "../../category/category.router.ts"),
+    path.resolve(__dirname, "../../category/entities/category.entity.ts"),
   ],
 } as swaggerJSDoc.Options;
 
