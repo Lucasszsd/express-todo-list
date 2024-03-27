@@ -11,6 +11,8 @@
  *         color:
  *           type: string
  *           description: Cor da categoria
+ *           enum: [RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, BROWN, GRAY, BLACK]
+ *           example: RED
  *     ReturnCategory:
  *       type: object
  *       properties:
@@ -23,12 +25,16 @@
  *         color:
  *           type: string
  *           description: cor da categoria
+ *           enum: [RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, BROWN, GRAY, BLACK]
+ *           example: RED
  *         createdAt:
  *           type: string
  *           description: Data de criação do livro
+ *           example: 2024-03-01T00:00:00.000Z
  *         updatedAt:
  *           type: string
  *           description: Data de atualização do livro
+ *           example: 2024-03-01T00:00:00.000Z
  */
 
 export interface CategoryEntity {

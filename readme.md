@@ -1,14 +1,6 @@
 Express ou Fastify
 
 check-list:
-[] - Entender a atividade, isso envolve ver a atividade
-[] - Instalar as dependencias
-[] - Opcional - Criar um dockerfile e um docker-compose.yml pra criar o container do banco escolhido
-[] - Criar as invalidade
-[] - Da um check se o servidor está funcionando
-[] - Criar a service para a entidade escolhida, e fazer o CRUD
-[] - Fazer a controller
-[] - Criar as rotas no arquivo de mortas
 [] - Testar as rotas
 [] - Partir para as rotas com regra de negócio
 [] - Implementa alguns quest

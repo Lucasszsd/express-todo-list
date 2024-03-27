@@ -49,7 +49,7 @@ categoryRoutes.post(
  * @swagger
  * /category:
  *   get:
- *     summary: Retorna todos os categorias
+ *     summary: Retorna todas as categorias
  *     tags: [Category]
  *     responses:
  *        200:
@@ -100,13 +100,13 @@ categoryRoutes.get(
  * @swagger
  * /category/{id}:
  *   patch:
- *     summary: Atualiza um categoria existente pelo ID
+ *     summary: Atualiza uma categoria existente pelo ID
  *     tags: [Category]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID do categoria a ser atualizado
+ *         description: ID do categoria a ser atualizada
  *         schema:
  *           type: string
  *     requestBody:
@@ -117,7 +117,7 @@ categoryRoutes.get(
  *             $ref: '#/components/schemas/Category'
  *     responses:
  *       200:
- *         description: categoria atualizado com sucesso
+ *         description: categoria atualizada com sucesso
  *         content:
  *           application/json:
  *             schema:

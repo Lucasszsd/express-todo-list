@@ -38,9 +38,11 @@
  *         createdAt:
  *           type: string
  *           description: Data de criação do livro
+ *           example: 2024-03-01T00:00:00.000Z
  *         updatedAt:
  *           type: string
  *           description: Data de atualização do livro
+ *           example: 2024-03-01T00:00:00.000Z
  */
 
 export interface UserEntity {
