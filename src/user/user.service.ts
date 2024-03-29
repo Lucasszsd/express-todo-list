@@ -1,7 +1,8 @@
 import { BadRequestException } from "../common/exception/types/bad-request.exception";
-import { NotFoundException } from "../common/exception/types/not-found-exception";
+import { NotFoundException } from "../common/exception/types/not-found.exception";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { UserRepository } from "./user.repository";
+import * as bcrypt from "bcrypt";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -10,17 +11,15 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const createUserProps = {
-      name: createUserDto.name ?? undefined,
-      email: createUserDto.email ?? undefined,
-      password: createUserDto.password ?? undefined,
-      weight: createUserDto.weight ?? undefined,
-    } as CreateUserDto;
+    const userExists = await this.findByEmail(createUserDto.email);
 
-    if (Object.values(createUserProps).includes(undefined))
-      throw new BadRequestException("Missing required fields on user");
+    if (!!userExists) {
+      throw new BadRequestException("User already exists with this email");
+    }
 
-    const user = await this.userRepository.create(createUserProps);
+    createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
+    const user = await this.userRepository.create(createUserDto);
+
     return user;
   }
 
@@ -42,5 +41,10 @@ export class UserService {
 
   async remove(id: string) {
     await this.userRepository.remove(id);
+  }
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findByEmail(email);
+    return user;
   }
 }
