@@ -1,10 +1,12 @@
 import { Request, Response, Router } from "express";
-import { asyncErrorHandler } from "../common/exception/async-error-handler";
+import { asyncErrorHandler } from "../common/middlewares/async-error-handler.middleware";
 import {
   CategoryController,
   CategoryRepository,
   CategoryService,
 } from "./index";
+import { validate } from "../common/middlewares/validation.middleware";
+import { createCategoryDto, updateCategoryDto } from "./dto";
 
 const categoryController = new CategoryController(
   new CategoryService(new CategoryRepository()),
@@ -23,6 +25,8 @@ const categoryRoutes = Router();
  * /category:
  *   post:
  *     tags: [Category]
+ *     security:
+ *      - bearerAuth: []
  *     summary: Cria uma categoria nova
  *     requestBody:
  *       required: true
@@ -40,6 +44,7 @@ const categoryRoutes = Router();
  * */
 categoryRoutes.post(
   "/category",
+  validate(createCategoryDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await categoryController.create(req, res);
   }),
@@ -51,6 +56,8 @@ categoryRoutes.post(
  *   get:
  *     summary: Retorna todas as categorias
  *     tags: [Category]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *        200:
  *          description: Lista de categorias retornada com sucesso
@@ -74,6 +81,8 @@ categoryRoutes.get(
  *   get:
  *     summary: Retorna uma categoria pelo ID
  *     tags: [Category]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -102,6 +111,8 @@ categoryRoutes.get(
  *   patch:
  *     summary: Atualiza uma categoria existente pelo ID
  *     tags: [Category]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -125,6 +136,7 @@ categoryRoutes.get(
  * */
 categoryRoutes.patch(
   "/category/:id",
+  validate(updateCategoryDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await categoryController.update(req, res);
   }),
@@ -136,6 +148,8 @@ categoryRoutes.patch(
  *   delete:
  *     summary: Exclui uma categoria existente pelo ID
  *     tags: [Category]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

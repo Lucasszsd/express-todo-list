@@ -1,4 +1,4 @@
-import { NotFoundException } from "../common/exception/types/not-found-exception";
+import { NotFoundException } from "../common/exception/types/not-found.exception";
 import { CreateCategoryDto, UpdateCategoryDto } from "./dto";
 import { CategoryRepository } from "./category.repository";
 import { BadRequestException } from "../common/exception/types/bad-request.exception";

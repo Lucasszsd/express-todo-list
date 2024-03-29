@@ -37,14 +37,6 @@
  *           example: 2024-03-01T00:00:00.000Z
  */
 
-export interface CategoryEntity {
-  id: string;
-  name: string;
-  color: Color;
-  created_at: Date;
-  updated_at: Date;
-}
-
 export enum Color {
   RED = "RED",
   BLUE = "BLUE",
@@ -56,4 +48,12 @@ export enum Color {
   BROWN = "BROWN",
   GRAY = "GRAY",
   BLACK = "BLACK",
+}
+
+export interface CategoryEntity {
+  id: string;
+  name: string;
+  color: Color;
+  created_at: Date;
+  updated_at: Date;
 }
