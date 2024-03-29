@@ -1,7 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 
 const prisma = new PrismaClient();
+
+const USER_SELECT_FIELDS = {
+  id: true,
+  name: true,
+  email: true,
+  weight: true,
+  createdAt: true,
+  updatedAt: true,
+} as Prisma.UserSelect;
 
 export class UserRepository {
   constructor() {}
@@ -11,11 +20,14 @@ export class UserRepository {
       data: {
         ...createUserDto,
       },
+      select: USER_SELECT_FIELDS,
     });
   }
 
   async findAll() {
-    return await prisma.user.findMany();
+    return await prisma.user.findMany({
+      select: USER_SELECT_FIELDS,
+    });
   }
 
   async findOne(id: string) {
@@ -23,6 +35,7 @@ export class UserRepository {
       where: {
         id,
       },
+      select: USER_SELECT_FIELDS,
     });
   }
 
@@ -34,6 +47,7 @@ export class UserRepository {
       data: {
         ...updateUserDto,
       },
+      select: USER_SELECT_FIELDS,
     });
   }
 
@@ -41,6 +55,20 @@ export class UserRepository {
     return await prisma.user.delete({
       where: {
         id,
+      },
+      select: USER_SELECT_FIELDS,
+    });
+  }
+
+  async findByEmail(email: string) {
+    return await prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        email: true,
+        password: true,
       },
     });
   }
