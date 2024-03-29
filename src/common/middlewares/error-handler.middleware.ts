@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpException } from "../exception/types/http-exception";
+import { HttpException } from "../exception/types/http.exception";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { NODE_ENV } from "../constants/constants";
 
 export const errorMiddleware = (
   err: Error,
@@ -8,9 +9,12 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(err);
+  if (NODE_ENV === "development") {
+    console.log(err);
+  }
   let message = "Internal Server Error";
   let statusCode = 500;
+  let { name } = err;
 
   if (err instanceof HttpException) {
     message = err.message;
@@ -21,15 +25,25 @@ export const errorMiddleware = (
     if (err.code === "P2025") {
       if (err.meta) message = `${err.meta.modelName} not found`;
       statusCode = 404;
+      name = "Not Found Error";
     }
 
     if (err.code === "P2002") {
       if (err.meta) message = `${err.meta.target}`;
       statusCode = 400;
+      name = "Bad Request Error";
+    }
+
+    if (err.code === "P2003") {
+      if (err.meta)
+        message = `Error on ${err.meta.modelName} foreign key constraint`;
+      statusCode = 400;
+      name = "Bad Request Error";
     }
   }
 
   res.status(statusCode).json({
+    name,
     message,
     statusCode,
   });
