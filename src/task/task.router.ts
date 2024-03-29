@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
-import { asyncErrorHandler } from "../common/exception/async-error-handler";
+import { asyncErrorHandler } from "../common/middlewares/async-error-handler.middleware";
 import { TaskController, TaskRepository, TaskService } from "./index";
+import { validate } from "../common/middlewares/validation.middleware";
+import { createTaskDto, updateTaskDto } from "./dto";
 
 const taskController = new TaskController(
   new TaskService(new TaskRepository()),
@@ -19,6 +21,8 @@ const taskRoutes = Router();
  * /tasks:
  *   post:
  *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
  *     summary: Cria uma tarefa nova
  *     requestBody:
  *       required: true
@@ -36,6 +40,7 @@ const taskRoutes = Router();
  * */
 taskRoutes.post(
   "/tasks",
+  validate(createTaskDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.create(req, res);
   }),
@@ -47,6 +52,8 @@ taskRoutes.post(
  *   get:
  *     summary: Retorna todas as tarefas
  *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *        200:
  *          description: Lista de tarefas retornada com sucesso
@@ -70,6 +77,8 @@ taskRoutes.get(
  *   get:
  *     summary: Retorna uma tarefa pelo ID
  *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -98,6 +107,8 @@ taskRoutes.get(
  *   patch:
  *     summary: Atualiza uma tarefa existente pelo ID
  *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -121,6 +132,7 @@ taskRoutes.get(
  * */
 taskRoutes.patch(
   "/tasks/:id",
+  validate(updateTaskDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.update(req, res);
   }),
@@ -132,6 +144,8 @@ taskRoutes.patch(
  *   delete:
  *     summary: Exclui uma tarefa existente pelo ID
  *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

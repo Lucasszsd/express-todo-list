@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
-import { asyncErrorHandler } from "../common/exception/async-error-handler";
+import { asyncErrorHandler } from "../common/middlewares/async-error-handler.middleware";
 import { UserController, UserRepository, UserService } from "./index";
+import { validate } from "../common/middlewares/validation.middleware";
+import { updateUserDto } from "./dto";
 
 const userController = new UserController(
   new UserService(new UserRepository()),
@@ -17,27 +19,25 @@ const userRoutes = Router();
 /**
  * @swagger
  * /users:
- *   post:
+ *   get:
+ *     summary: Retorna todos os usuários
  *     tags: [Users]
- *     summary: Cria um usuário novo
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
+ *     security:
+ *      - bearerAuth: []
  *     responses:
- *       201:
- *         description: usuário criado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ReturnUser'
+ *        200:
+ *          description: Lista de usuários retornada com sucesso
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/ReturnUser'
  * */
-userRoutes.post(
+userRoutes.get(
   "/users",
   asyncErrorHandler(async (req: Request, res: Response) => {
-    await userController.create(req, res);
+    await userController.findAll(req, res);
   }),
 );
 
@@ -47,6 +47,8 @@ userRoutes.post(
  *   get:
  *     summary: Retorna um usuário pelo ID
  *     tags: [Users]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -71,33 +73,12 @@ userRoutes.get(
 
 /**
  * @swagger
- * /users:
- *   get:
- *     summary: Retorna todos os usuários
- *     tags: [Users]
- *     responses:
- *        200:
- *          description: Lista de usuários retornada com sucesso
- *          content:
- *            application/json:
- *              schema:
- *                type: array
- *                items:
- *                  $ref: '#/components/schemas/ReturnUser'
- * */
-userRoutes.get(
-  "/users",
-  asyncErrorHandler(async (req: Request, res: Response) => {
-    await userController.findAll(req, res);
-  }),
-);
-
-/**
- * @swagger
  * /users/{id}:
  *   patch:
  *     summary: Atualiza um usuário existente pelo ID
  *     tags: [Users]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -121,6 +102,7 @@ userRoutes.get(
  * */
 userRoutes.patch(
   "/users/:id",
+  validate(updateUserDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await userController.update(req, res);
   }),
@@ -132,6 +114,8 @@ userRoutes.patch(
  *   delete:
  *     summary: Exclui um usuário existente pelo ID
  *     tags: [Users]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
