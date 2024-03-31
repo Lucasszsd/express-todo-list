@@ -54,16 +54,63 @@ taskRoutes.post(
  *     tags: [Tasks]
  *     security:
  *      - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: longestDescription
+ *         required: false
+ *         description: Filtrar tarefa com maior descrição
+ *         schema:
+ *           type: boolean
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         description: Filtrar tarefas por status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, DOING, DONE]
+ *       - in: query
+ *         name: userIdFilterType
+ *         required: false
+ *         description: Tipo de filtro por user_id
+ *         schema:
+ *           type: string
+ *           enum: [TASK_QUANTITY, OLDEST_TASK, MOST_RECENT_TASK]
+ *       - in: query
+ *         name: user_id
+ *         required: false
+ *         description: Filtro por user_id
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: category_id
+ *         required: false
+ *         description: Filtrar tarefas por categoria
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: startConclusionDate
+ *         required: false
+ *         description: Data de início do período de filtro de vencimento da tarefa YYYY-MM-DD
+ *         schema:
+ *           type: string
+ *           format: string
+ *       - in: query
+ *         name: endConclusionDate
+ *         required: false
+ *         description: Data de fim do período de filtro de vencimento da tarefa YYYY-MM-DD
+ *         schema:
+ *           type: string
+ *           format: string
  *     responses:
- *        200:
- *          description: Lista de tarefas retornada com sucesso
- *          content:
- *            application/json:
- *              schema:
- *                type: array
- *                items:
- *                  $ref: '#/components/schemas/ReturnTask'
- * */
+ *       200:
+ *         description: Lista de tarefas retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ReturnTask'
+ */
 taskRoutes.get(
   "/tasks",
   asyncErrorHandler(async (req: Request, res: Response) => {
@@ -73,7 +120,7 @@ taskRoutes.get(
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tasks/id/{id}:
  *   get:
  *     summary: Retorna uma tarefa pelo ID
  *     tags: [Tasks]
@@ -95,7 +142,7 @@ taskRoutes.get(
  *               $ref: '#/components/schemas/ReturnTask'
  * */
 taskRoutes.get(
-  "/tasks/:id",
+  "/tasks/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.findOne(req, res);
   }),
@@ -103,7 +150,35 @@ taskRoutes.get(
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tasks/average-conclusion:
+ *   get:
+ *     summary: Retorna a média de conclusão de tarefas
+ *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Média de conclusão de tarefas retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 average:
+ *                   type: number
+ *                   format: float
+ *                   example: 0.5
+ */
+taskRoutes.get(
+  "/tasks/average-conclusion",
+  asyncErrorHandler(async (req: Request, res: Response) => {
+    await taskController.getTaskConclusionAverage(req, res);
+  }),
+);
+
+/**
+ * @swagger
+ * /tasks/id/{id}:
  *   patch:
  *     summary: Atualiza uma tarefa existente pelo ID
  *     tags: [Tasks]
@@ -131,7 +206,7 @@ taskRoutes.get(
  *               $ref: '#/components/schemas/ReturnTask'
  * */
 taskRoutes.patch(
-  "/tasks/:id",
+  "/tasks/id/:id",
   validate(updateTaskDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.update(req, res);
@@ -140,7 +215,7 @@ taskRoutes.patch(
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tasks/id/{id}:
  *   delete:
  *     summary: Exclui uma tarefa existente pelo ID
  *     tags: [Tasks]
@@ -158,7 +233,7 @@ taskRoutes.patch(
  *         description: tarefa excluída com sucesso
  */
 taskRoutes.delete(
-  "/tasks/:id",
+  "/tasks/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.remove(req, res);
   }),
