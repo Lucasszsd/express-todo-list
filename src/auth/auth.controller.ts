@@ -2,11 +2,7 @@ import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 
 export class AuthController {
-  private authService: AuthService;
-
-  constructor(authService: AuthService) {
-    this.authService = authService;
-  }
+  constructor(private readonly authService: AuthService) {}
 
   async signin(req: Request, res: Response) {
     const token = await this.authService.signin(req.body);

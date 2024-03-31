@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { CategoryService } from "./category.service";
 
 export class CategoryController {
-  private categoryService: CategoryService;
-  constructor(categoryService: CategoryService) {
-    this.categoryService = categoryService;
-  }
+  constructor(private readonly categoryService: CategoryService) {}
 
   async create(req: Request, res: Response) {
     const user = await this.categoryService.create(req.body);
@@ -13,7 +10,8 @@ export class CategoryController {
   }
 
   async findAll(req: Request, res: Response) {
-    const users = await this.categoryService.findAll();
+    console.log(req.params);
+    const users = await this.categoryService.findAll(req.query);
     return res.status(200).json(users);
   }
 

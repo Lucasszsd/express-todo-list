@@ -5,15 +5,10 @@ import * as jwt from "jsonwebtoken";
 import { LoginDto } from "./dto/login.dto";
 import { JWT_SECRET } from "../common/constants/constants";
 import { CreateUserDto } from "../user/dto";
-import { BadRequestException } from "../common/exception/types/bad-request.exception";
 import { UserEntity } from "../user/entities/user.entity";
 
 export class AuthService {
-  private userService: UserService;
-
-  constructor(userService: UserService) {
-    this.userService = userService;
-  }
+  constructor(private readonly userService: UserService) {}
 
   async signin(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -22,7 +17,7 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException("Usuário ou senha inválidos");
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = bcrypt.compareSync(password, user.password);
 
     if (!isValidPassword)
       throw new UnauthorizedException("Usuário ou senha inválidos");

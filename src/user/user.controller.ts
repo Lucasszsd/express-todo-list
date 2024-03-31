@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { UserService } from "./user.service";
 
 export class UserController {
-  private userService: UserService;
-  constructor(userService: UserService) {
-    this.userService = userService;
-  }
+  constructor(private readonly userService: UserService) {}
 
   async findAll(req: Request, res: Response) {
     const users = await this.userService.findAll();

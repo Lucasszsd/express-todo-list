@@ -5,10 +5,7 @@ import { UserRepository } from "./user.repository";
 import * as bcrypt from "bcrypt";
 
 export class UserService {
-  private userRepository: UserRepository;
-  constructor(userRepository: UserRepository) {
-    this.userRepository = userRepository;
-  }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto) {
     const userExists = await this.findByEmail(createUserDto.email);

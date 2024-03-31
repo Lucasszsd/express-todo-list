@@ -1,28 +1,17 @@
 import { NotFoundException } from "../common/exception/types/not-found.exception";
 import { CreateCategoryDto, UpdateCategoryDto } from "./dto";
 import { CategoryRepository } from "./category.repository";
-import { BadRequestException } from "../common/exception/types/bad-request.exception";
 
 export class CategoryService {
-  private categoryRepository: CategoryRepository;
-  constructor(categoryRepository: CategoryRepository) {
-    this.categoryRepository = categoryRepository;
-  }
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async create(createCategoryDto: CreateCategoryDto) {
-    const createCategoryProps = {
-      name: createCategoryDto.name ?? undefined,
-      color: createCategoryDto.color ?? undefined,
-    } as CreateCategoryDto;
-
-    if (Object.values(createCategoryProps).includes(undefined))
-      throw new BadRequestException("Missing required fields on category");
-
-    const category = await this.categoryRepository.create(createCategoryProps);
+    const category = await this.categoryRepository.create(createCategoryDto);
     return category;
   }
 
-  async findAll() {
+  async findAll(filterParams: any) {
+    console.log(filterParams);
     const categorys = await this.categoryRepository.findAll();
     return categorys;
   }
