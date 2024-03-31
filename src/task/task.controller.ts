@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { TaskService } from "./task.service";
 
 export class TaskController {
-  private taskService: TaskService;
-  constructor(taskService: TaskService) {
-    this.taskService = taskService;
-  }
+  constructor(private readonly taskService: TaskService) {}
 
   async create(req: Request, res: Response) {
     const task = await this.taskService.create(req.body);
@@ -13,13 +10,18 @@ export class TaskController {
   }
 
   async findAll(req: Request, res: Response) {
-    const tasks = await this.taskService.findAll();
+    const tasks = await this.taskService.findAll(req.query);
     return res.status(200).json(tasks);
   }
 
   async findOne(req: Request, res: Response) {
     const task = await this.taskService.findOne(req.params.id);
     return res.status(200).json(task);
+  }
+
+  async getTaskConclusionAverage(req: Request, res: Response) {
+    const average = await this.taskService.getTaskConclusionAverage();
+    return res.status(200).json(average);
   }
 
   async update(req: Request, res: Response) {

@@ -27,10 +27,6 @@ export class TaskRepository {
     });
   }
 
-  async getTaskConclusionAverage() {
-    return prisma.task.findMany();
-  }
-
   async update(id: string, updateTaskDto: UpdateTaskDto) {
     return prisma.task.update({
       where: {
