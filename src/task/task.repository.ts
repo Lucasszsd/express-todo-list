@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateTaskDto, UpdateTaskDto } from "./dto";
+import { TaskQueryParams } from "./dto/task-query-params";
 
 const prisma = new PrismaClient();
 
@@ -7,27 +8,31 @@ export class TaskRepository {
   constructor() {}
 
   async create(createTaskDto: CreateTaskDto) {
-    return await prisma.task.create({
+    return prisma.task.create({
       data: {
         ...createTaskDto,
       },
     });
   }
 
-  async findAll() {
-    return await prisma.task.findMany();
+  async findAll(filterParams: any) {
+    return prisma.task.findMany(filterParams);
   }
 
   async findOne(id: string) {
-    return await prisma.task.findUnique({
+    return prisma.task.findUnique({
       where: {
         id,
       },
     });
   }
 
+  async getTaskConclusionAverage() {
+    return prisma.task.findMany();
+  }
+
   async update(id: string, updateTaskDto: UpdateTaskDto) {
-    return await prisma.task.update({
+    return prisma.task.update({
       where: {
         id,
       },
@@ -38,7 +43,7 @@ export class TaskRepository {
   }
 
   async remove(id: string) {
-    return await prisma.task.delete({
+    return prisma.task.delete({
       where: {
         id,
       },
