@@ -58,6 +58,13 @@ categoryRoutes.post(
  *     tags: [Category]
  *     security:
  *      - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: tasks
+ *         required: false
+ *         description: Retorna tarefas associadas as categorias
+ *         schema:
+ *           type: boolean
  *     responses:
  *        200:
  *          description: Lista de categorias retornada com sucesso
@@ -77,7 +84,7 @@ categoryRoutes.get(
 
 /**
  * @swagger
- * /category/{id}:
+ * /category/id/{id}:
  *   get:
  *     summary: Retorna uma categoria pelo ID
  *     tags: [Category]
@@ -99,7 +106,7 @@ categoryRoutes.get(
  *               $ref: '#/components/schemas/ReturnCategory'
  * */
 categoryRoutes.get(
-  "/category/:id",
+  "/category/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await categoryController.findOne(req, res);
   }),
@@ -107,7 +114,7 @@ categoryRoutes.get(
 
 /**
  * @swagger
- * /category/{id}:
+ * /category/id/{id}:
  *   patch:
  *     summary: Atualiza uma categoria existente pelo ID
  *     tags: [Category]
@@ -135,7 +142,7 @@ categoryRoutes.get(
  *               $ref: '#/components/schemas/ReturnCategory'
  * */
 categoryRoutes.patch(
-  "/category/:id",
+  "/category/id/:id",
   validate(updateCategoryDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await categoryController.update(req, res);
@@ -144,7 +151,7 @@ categoryRoutes.patch(
 
 /**
  * @swagger
- * /category/{id}:
+ * /category/id/{id}:
  *   delete:
  *     summary: Exclui uma categoria existente pelo ID
  *     tags: [Category]
@@ -162,7 +169,7 @@ categoryRoutes.patch(
  *         description: categoria excluída com sucesso
  */
 categoryRoutes.delete(
-  "/category/:id",
+  "/category/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await categoryController.remove(req, res);
   }),

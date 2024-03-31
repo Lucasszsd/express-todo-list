@@ -43,7 +43,7 @@ userRoutes.get(
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/id/{id}:
  *   get:
  *     summary: Retorna um usuário pelo ID
  *     tags: [Users]
@@ -65,7 +65,7 @@ userRoutes.get(
  *               $ref: '#/components/schemas/ReturnUser'
  * */
 userRoutes.get(
-  "/users/:id",
+  "/users/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await userController.findOne(req, res);
   }),
@@ -73,7 +73,7 @@ userRoutes.get(
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/id/{id}:
  *   patch:
  *     summary: Atualiza um usuário existente pelo ID
  *     tags: [Users]
@@ -101,7 +101,7 @@ userRoutes.get(
  *               $ref: '#/components/schemas/ReturnUser'
  * */
 userRoutes.patch(
-  "/users/:id",
+  "/users/id/:id",
   validate(updateUserDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await userController.update(req, res);
@@ -110,7 +110,7 @@ userRoutes.patch(
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/id/{id}:
  *   delete:
  *     summary: Exclui um usuário existente pelo ID
  *     tags: [Users]
@@ -128,7 +128,7 @@ userRoutes.patch(
  *         description: usuário excluído com sucesso
  */
 userRoutes.delete(
-  "/users/:id",
+  "/users/id/:id",
   asyncErrorHandler(async (req: Request, res: Response) => {
     await userController.remove(req, res);
   }),
