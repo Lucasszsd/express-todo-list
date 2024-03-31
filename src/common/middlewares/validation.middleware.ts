@@ -37,10 +37,18 @@ function validate(schema: any) {
         );
       }
 
-      if (itemSchema.type === "date" && isNaN(Date.parse(body[item])))
+      if (
+        itemSchema.required &&
+        itemSchema.type === "date" &&
+        isNaN(Date.parse(body[item]))
+      )
         errors.push(`${item} must be a valid date`);
 
-      if (itemSchema.enum && !itemSchema.enum.includes(body[item]))
+      if (
+        itemSchema.required &&
+        itemSchema.enum &&
+        !itemSchema.enum.includes(body[item])
+      )
         errors.push(`${item} must be one of ${itemSchema.enum.join(", ")}`);
 
       if (
@@ -66,10 +74,10 @@ function validate(schema: any) {
 
     if (errors.length > 0) throw new BadRequestException(errors.join(", "));
 
-    if (Object.values(validatedBody).every((value: any) => value === undefined))
-      throw new BadRequestException("Missing required fields");
-
-    if (Object.keys(validatedBody).length === 0)
+    if (
+      Object.keys(validatedBody).length === 0 ||
+      Object.values(validatedBody).every((value: any) => value === undefined)
+    )
       throw new BadRequestException("Missing required fields");
 
     req.body = validatedBody;
