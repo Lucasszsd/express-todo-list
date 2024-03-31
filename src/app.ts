@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import { specs } from "./common/swagger/swagger-config";
+import { opts, specs } from "./common/swagger/swagger-config";
 import { errorMiddleware } from "./common/middlewares/error-handler.middleware";
 import userRoutes from "./user/user.router";
 import taskRoutes from "./task/task.router";
@@ -29,7 +29,7 @@ export class App {
   }
 
   private routes() {
-    this.app.use("/api", swaggerUi.serve, swaggerUi.setup(specs));
+    this.app.use("/api", swaggerUi.serve, swaggerUi.setup(specs, opts));
     this.app.use(appRoutes);
     this.app.use(userRoutes);
     this.app.use(taskRoutes);

@@ -12,9 +12,6 @@ const options = {
         "This is a todo-list application made with Express, documented with Swagger and authenticated with JWT",
     },
   },
-  swaggerOptions: {
-    persistAuthorization: true,
-  },
 
   apis: [
     path.resolve(__dirname, "../../auth/auth.router.ts"),
@@ -27,6 +24,10 @@ const options = {
     path.resolve(__dirname, "../../category/entities/category.entity.ts"),
     path.resolve(__dirname, "../../common/security/jwt-token.entity.ts"),
   ],
-} as swaggerJSDoc.Options & SwaggerUiOptions;
+} as swaggerJSDoc.Options;
+
+export const opts = {
+  swaggerOptions: { docExpansions: "none", persistAuthorization: true },
+} as SwaggerUiOptions;
 
 export const specs = swaggerJSDoc(options);
