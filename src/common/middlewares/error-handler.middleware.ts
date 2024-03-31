@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpException } from "../exception/types/http.exception";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { NODE_ENV } from "../constants/constants";
 
 export const errorMiddleware = (
   err: Error,
@@ -9,9 +8,6 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  if (NODE_ENV === "development") {
-    console.log(err);
-  }
   let message = "Internal Server Error";
   let statusCode = 500;
   let { name } = err;
