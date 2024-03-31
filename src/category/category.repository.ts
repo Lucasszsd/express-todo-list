@@ -7,7 +7,7 @@ export class CategoryRepository {
   constructor() {}
 
   async create(createCategoryDto: CreateCategoryDto) {
-    return await prisma.category.create({
+    return prisma.category.create({
       data: {
         ...createCategoryDto,
       },
@@ -15,11 +15,11 @@ export class CategoryRepository {
   }
 
   async findAll() {
-    return await prisma.category.findMany();
+    return prisma.category.findMany();
   }
 
   async findOne(id: string) {
-    return await prisma.category.findUnique({
+    return prisma.category.findUnique({
       where: {
         id,
       },
@@ -27,7 +27,7 @@ export class CategoryRepository {
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return await prisma.category.update({
+    return prisma.category.update({
       where: {
         id,
       },
@@ -38,7 +38,7 @@ export class CategoryRepository {
   }
 
   async remove(id: string) {
-    return await prisma.category.delete({
+    return prisma.category.delete({
       where: {
         id,
       },

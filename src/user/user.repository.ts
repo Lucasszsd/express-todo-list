@@ -16,7 +16,7 @@ export class UserRepository {
   constructor() {}
 
   async create(createUserDto: CreateUserDto) {
-    return await prisma.user.create({
+    return prisma.user.create({
       data: {
         ...createUserDto,
       },
@@ -25,13 +25,13 @@ export class UserRepository {
   }
 
   async findAll() {
-    return await prisma.user.findMany({
+    return prisma.user.findMany({
       select: USER_SELECT_FIELDS,
     });
   }
 
   async findOne(id: string) {
-    return await prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         id,
       },
@@ -40,7 +40,7 @@ export class UserRepository {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return await prisma.user.update({
+    return prisma.user.update({
       where: {
         id,
       },
@@ -52,7 +52,7 @@ export class UserRepository {
   }
 
   async remove(id: string) {
-    return await prisma.user.delete({
+    return prisma.user.delete({
       where: {
         id,
       },
@@ -61,7 +61,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    return await prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         email,
       },
