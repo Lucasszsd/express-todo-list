@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateTaskDto, UpdateTaskDto } from "./dto";
-import { TaskQueryParams } from "./dto/task-query-params";
 
 const prisma = new PrismaClient();
 
