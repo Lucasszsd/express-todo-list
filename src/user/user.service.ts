@@ -27,8 +27,8 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: string, filterParams: any) {
-    if (!filterParams.userIdFilterType) {
+  async findOne(id: string, queryParams: any) {
+    if (!queryParams.userIdFilterType) {
       const user = await this.userRepository.findOne(id);
       if (!user)
         throw new NotFoundException(`Unable to find user with id ${id}`);
@@ -45,7 +45,7 @@ export class UserService {
 
     const { tasks, ...userWithoutTasks } = user;
 
-    if (filterParams.userIdFilterType === "TASK_QUANTITY") {
+    if (queryParams.userIdFilterType === "TASK_QUANTITY") {
       return { userWithoutTasks, taskQuantity: tasks.length };
     }
 
@@ -53,10 +53,10 @@ export class UserService {
       (a: any, b: any) => a.createdAt.getTime() - b.createdAt.getTime(),
     );
 
-    if (filterParams.userIdFilterType === "OLDEST_TASK") {
+    if (queryParams.userIdFilterType === "OLDEST_TASK") {
       return { userWithoutTasks, oldestTask: tasks[0] };
     }
-    if (filterParams.userIdFilterType === "MOST_RECENT_TASK") {
+    if (queryParams.userIdFilterType === "MOST_RECENT_TASK") {
       return { userWithoutTasks, mostRecentTask: tasks[tasks.length - 1] };
     }
   }
