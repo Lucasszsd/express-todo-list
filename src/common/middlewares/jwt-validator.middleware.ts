@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { UnauthorizedException } from "../exception/types/unauthorized.exception";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../constants/constants";
+import { UserRepository, UserService } from "../../user";
+import { asyncErrorHandler } from "./async-error-handler.middleware";
 
 const jwtRegex = /Bearer\s[a-zA-Z0-9-_=]+\.[a-zA-Z0-9-_=]+\.[a-zA-Z0-9-_=]+/;
 const swaggerUrls = [
@@ -16,31 +18,46 @@ const swaggerUrls = [
   "/api/favicon-32x32.png",
 ];
 
+type jwtDecodedPayload = {
+  id: string;
+  email: string;
+  iat: number;
+  exp: number;
+};
+
+const userService = new UserService(new UserRepository());
+
 function jwtValidator(routes: string[] = []) {
-  const validate = (req: Request, res: Response, next: NextFunction) => {
-    if (swaggerUrls.includes(req.url)) return next();
-    if (routes.includes(req.url)) return next();
+  const validate = asyncErrorHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      if (swaggerUrls.includes(req.url)) return next();
+      if (routes.includes(req.url)) return next();
 
-    const bearerToken = req.headers.authorization;
+      const bearerToken = req.headers.authorization;
 
-    if (!bearerToken || !jwtRegex.test(bearerToken)) {
-      throw new UnauthorizedException("Incorrect JWT Token format");
-    }
+      if (!bearerToken || !jwtRegex.test(bearerToken)) {
+        throw new UnauthorizedException("Invalid JWT Token");
+      }
 
-    const token = bearerToken.split(" ")[1];
+      const token = bearerToken.split(" ")[1];
 
-    if (!token) {
-      throw new UnauthorizedException("JWT Token not provided");
-    }
+      try {
+        jwt.verify(token, JWT_SECRET);
+      } catch (err) {
+        throw new UnauthorizedException("Invalid JWT Token");
+      }
 
-    const isValidToken = jwt.verify(token, JWT_SECRET);
+      const decodedPayload = jwt.decode(token) as jwtDecodedPayload;
 
-    if (!isValidToken) {
-      throw new UnauthorizedException("Invalid JWT Token");
-    }
+      try {
+        await userService.findOne(decodedPayload.id, {});
+      } catch (err) {
+        throw new UnauthorizedException("Invalid JWT Token");
+      }
 
-    return next();
-  };
+      return next();
+    },
+  );
 
   return validate;
 }
