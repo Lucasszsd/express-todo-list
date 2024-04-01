@@ -56,12 +56,6 @@ taskRoutes.post(
  *      - bearerAuth: []
  *     parameters:
  *       - in: query
- *         name: longestDescription
- *         required: false
- *         description: Filtrar tarefa com maior descrição
- *         schema:
- *           type: boolean
- *       - in: query
  *         name: status
  *         required: false
  *         description: Filtrar tarefas por status
