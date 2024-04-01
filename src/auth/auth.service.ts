@@ -32,7 +32,7 @@ export class AuthService {
 
     const token = this.signToken(user);
 
-    return { ...user, access_token: token };
+    return { user, access_token: token };
   }
 
   private signToken(user: Partial<UserEntity>) {
