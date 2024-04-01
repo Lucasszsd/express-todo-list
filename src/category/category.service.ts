@@ -11,9 +11,8 @@ export class CategoryService {
   }
 
   async findAll(filterParams: any) {
-    console.log(filterParams);
-    const categorys = await this.categoryRepository.findAll();
-    return categorys;
+    const categories = await this.categoryRepository.findAll();
+    return categories;
   }
 
   async findOne(id: string) {

@@ -10,7 +10,6 @@ export class CategoryController {
   }
 
   async findAll(req: Request, res: Response) {
-    console.log(req.params);
     const users = await this.categoryService.findAll(req.query);
     return res.status(200).json(users);
   }
