@@ -39,6 +39,13 @@ export class UserRepository {
     });
   }
 
+  async findOneWithTask(id: any) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: { ...USER_SELECT_FIELDS, tasks: true },
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     return prisma.user.update({
       where: {

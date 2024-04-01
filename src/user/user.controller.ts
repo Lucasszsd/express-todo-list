@@ -10,7 +10,7 @@ export class UserController {
   }
 
   async findOne(req: Request, res: Response) {
-    const user = await this.userService.findOne(req.params.id);
+    const user = await this.userService.findOne(req.params.id, req.query);
     return res.status(200).json(user);
   }
 

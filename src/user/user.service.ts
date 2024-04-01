@@ -1,5 +1,7 @@
 import { BadRequestException } from "../common/exception/types/bad-request.exception";
 import { NotFoundException } from "../common/exception/types/not-found.exception";
+import { mergeObjects } from "../common/utils/merge-objects";
+import { TaskEntity } from "../task/entities/task.entity";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { UserRepository } from "./user.repository";
 import * as bcrypt from "bcrypt";
@@ -25,10 +27,38 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: string) {
-    const user = await this.userRepository.findOne(id);
+  async findOne(id: string, filterParams: any) {
+    if (!filterParams.userIdFilterType) {
+      const user = await this.userRepository.findOne(id);
+      if (!user)
+        throw new NotFoundException(`Unable to find user with id ${id}`);
+      return user;
+    }
+
+    const user = await this.userRepository.findOneWithTask(id);
+
     if (!user) throw new NotFoundException(`Unable to find user with id ${id}`);
-    return user;
+
+    if (user.tasks.length === 0) {
+      return user;
+    }
+
+    const { tasks, ...userWithoutTasks } = user;
+
+    if (filterParams.userIdFilterType === "TASK_QUANTITY") {
+      return { userWithoutTasks, taskQuantity: tasks.length };
+    }
+
+    tasks.sort(
+      (a: any, b: any) => a.createdAt.getTime() - b.createdAt.getTime(),
+    );
+
+    if (filterParams.userIdFilterType === "OLDEST_TASK") {
+      return { userWithoutTasks, oldestTask: tasks[0] };
+    }
+    if (filterParams.userIdFilterType === "MOST_RECENT_TASK") {
+      return { userWithoutTasks, mostRecentTask: tasks[tasks.length - 1] };
+    }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
