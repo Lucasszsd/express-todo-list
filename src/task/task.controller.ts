@@ -24,6 +24,11 @@ export class TaskController {
     return res.status(200).json(average);
   }
 
+  async getLongestDescription(req: Request, res: Response) {
+    const task = await this.taskService.getLongestDescription();
+    return res.status(200).json(task);
+  }
+
   async update(req: Request, res: Response) {
     const task = await this.taskService.update(req.params.id, req.body);
     return res.status(200).json(task);

@@ -71,6 +71,22 @@ export class TaskService {
     return average;
   }
 
+  async getLongestDescription() {
+    const tasks = await this.taskRepository.findAll({});
+
+    let largestDescription = 0;
+    let taskIndex = 0;
+
+    tasks.forEach((task, index) => {
+      if (task.description && task.description.length > largestDescription) {
+        largestDescription = task.description.length;
+        taskIndex = index;
+      }
+    });
+
+    return tasks[taskIndex];
+  }
+
   async update(id: string, updateTaskDto: UpdateTaskDto) {
     const task = await this.taskRepository.update(id, updateTaskDto);
     return task;

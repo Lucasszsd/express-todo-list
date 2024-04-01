@@ -171,6 +171,30 @@ taskRoutes.get(
 
 /**
  * @swagger
+ * /tasks/longest-description:
+ *   get:
+ *     summary: Retorna a tarefa com a maior descrição
+ *     tags: [Tasks]
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Tarefa com a maior descrição retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               $ref: '#/components/schemas/ReturnTask'
+ */
+taskRoutes.get(
+  "/tasks/longest-description",
+  asyncErrorHandler(async (req: Request, res: Response) => {
+    await taskController.getLongestDescription(req, res);
+  }),
+);
+
+/**
+ * @swagger
  * /tasks/id/{id}:
  *   patch:
  *     summary: Atualiza uma tarefa existente pelo ID
