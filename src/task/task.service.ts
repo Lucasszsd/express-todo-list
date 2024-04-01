@@ -1,9 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { NotFoundException } from "../common/exception/types/not-found.exception";
 import { CreateTaskDto, UpdateTaskDto } from "./dto";
-import { TaskQueryParams } from "./dto/task-query-params";
+import { TaskQueryParams } from "./dto/task-query.params";
 import { TaskRepository } from "./task.repository";
 import { differenceInDays } from "date-fns";
+import { mergeObjects } from "../common/utils/merge-objects";
 
 export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}
@@ -14,52 +15,34 @@ export class TaskService {
   }
 
   async findAll(filterParams: TaskQueryParams) {
-    console.log(filterParams);
+    if (Object.keys(filterParams).length === 0) {
+      return await this.taskRepository.findAll({});
+    }
 
     const queryRaw: Array<Prisma.TaskWhereInput> = [];
 
-    if (Object.keys(filterParams).length > 0) {
-      if (filterParams.longestDescription) {
-        queryRaw.push({});
-      }
-      if (filterParams.status) {
-        queryRaw.push({ status: filterParams.status });
-      }
-      if (filterParams.startConclusionDate && filterParams.endConclusionDate) {
-        queryRaw.push({
-          conclusion: {
-            gte: new Date(filterParams.startConclusionDate),
-            lte: new Date(filterParams.endConclusionDate),
-          },
-        });
-      }
-      if (filterParams.category_id) {
-        queryRaw.push({ category_id: filterParams.category_id });
-      }
-      if (filterParams.user_id) {
-        queryRaw.push({ user_id: filterParams.user_id });
-      }
-      if (filterParams.userIdFilterType) {
-        if (filterParams.userIdFilterType === "TASK_QUANTITY") {
-          queryRaw.push({});
-        }
-        if (filterParams.userIdFilterType === "OLDEST_TASK") {
-          queryRaw.push({});
-        }
-        if (filterParams.userIdFilterType === "MOST_RECENT_TASK") {
-          queryRaw.push({});
-        }
-      }
+    if (filterParams.longestDescription) {
+      queryRaw.push({});
+    }
+    if (filterParams.status) {
+      queryRaw.push({ status: filterParams.status });
+    }
+    if (filterParams.startConclusionDate && filterParams.endConclusionDate) {
+      queryRaw.push({
+        conclusion: {
+          gte: new Date(filterParams.startConclusionDate),
+          lte: new Date(filterParams.endConclusionDate),
+        },
+      });
+    }
+    if (filterParams.category_id) {
+      queryRaw.push({ category_id: filterParams.category_id });
+    }
+    if (filterParams.user_id) {
+      queryRaw.push({ user_id: filterParams.user_id });
     }
 
-    let mergedQuery: any = {};
-
-    for (const query of queryRaw) {
-      if (Object.keys(query).length === 0) continue;
-      mergedQuery = { ...mergedQuery, ...query };
-    }
-
-    const query = { where: { AND: [mergedQuery] } };
+    const query = mergeObjects(queryRaw);
 
     const task = await this.taskRepository.findAll(query);
     return task;
@@ -73,10 +56,6 @@ export class TaskService {
 
   async getTaskConclusionAverage() {
     const tasks = await this.taskRepository.findAll({});
-    // const average = tasks.reduce((acc, task) => {
-    //   if (!task.conclusion) return acc;
-    //   return acc + differenceInDays(task.conclusion, task.createdAt);
-    // });
 
     let numberOfTasksWithConclusion = 0;
 
