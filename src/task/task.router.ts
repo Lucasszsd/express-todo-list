@@ -69,13 +69,6 @@ taskRoutes.post(
  *           type: string
  *           enum: [PENDING, DOING, DONE]
  *       - in: query
- *         name: userIdFilterType
- *         required: false
- *         description: Tipo de filtro por user_id
- *         schema:
- *           type: string
- *           enum: [TASK_QUANTITY, OLDEST_TASK, MOST_RECENT_TASK]
- *       - in: query
  *         name: user_id
  *         required: false
  *         description: Filtro por user_id
