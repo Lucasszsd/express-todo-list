@@ -1,4 +1,5 @@
 import { BadRequestException } from "../common/exception/types/bad-request.exception";
+import { ConflictException } from "../common/exception/types/conflict.exception";
 import { NotFoundException } from "../common/exception/types/not-found.exception";
 import { mergeObjects } from "../common/utils/merge-objects";
 import { TaskEntity } from "../task/entities/task.entity";
@@ -13,7 +14,7 @@ export class UserService {
     const userExists = await this.findByEmail(createUserDto.email);
 
     if (!!userExists) {
-      throw new BadRequestException("User already exists with this email");
+      throw new ConflictException("User already exists with this email");
     }
 
     createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
