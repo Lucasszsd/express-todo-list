@@ -1,40 +1,33 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { faker } from "@faker-js/faker";
+import { v4 } from "uuid";
+import { UserEntity } from "../../src/user/entities/user.entity";
 
 const prisma = new PrismaClient();
 
-export const users = [
-  {
-    id: "1",
-    name: "Matheus Baraldi",
-    email: "matheus.baraldi@mail.com",
-    password: "matheus123",
-    weight: 100,
-  },
-  {
-    id: "2",
-    name: "Thiago Bussola",
-    email: "thiago.bussola@mail.com",
-    password: "thiago123",
-    weight: 60,
-  },
-  {
-    id: "3",
-    name: "Rodrigo Goes",
-    email: "rodrigo.goes@mail.com",
-    password: "rodrigo123",
-    weight: 150,
-  },
-];
+type UserPayload = Prisma.UserCreateInput;
 
-export async function seed() {
-  const addedUsers = [];
-  for (const user of users) {
-    addedUsers.push(await prisma.user.create({ data: user }));
+const getRandomUser = async () => {
+  return {
+    id: v4(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    password: faker.internet.password({ length: 10 }),
+    weight: Math.floor(Math.random() * 300) + 30,
+  };
+};
+
+export async function seed(numberOfUsers: number = 3): Promise<UserEntity[]> {
+  const addedUsers: any[] = [];
+
+  for (let x = 0; x < numberOfUsers; x++) {
+    const userPayload = await getRandomUser();
+    addedUsers.push(await prisma.user.create({ data: userPayload }));
   }
-  await Promise.all(addedUsers);
+  return await Promise.all(addedUsers);
 }
 
-export async function unseed() {
+export async function unseed(users: UserEntity[]) {
   const ids = users.map((user) => user.id);
   await prisma.user.deleteMany({ where: { id: { in: ids } } });
 }

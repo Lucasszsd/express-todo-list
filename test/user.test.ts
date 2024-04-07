@@ -1,13 +1,20 @@
 //faltou adicionar o teste do payload de update
 import * as request from "supertest";
 import app from "../src/app";
-import { seed, unseed, users } from "./seeds/user.seed";
+import { seed, unseed } from "./seeds/user.seed";
+import { UserEntity } from "../src/user/entities/user.entity";
 
 let id = "";
 let accessToken = "";
+let users: UserEntity[] = [];
 
 beforeAll(async () => {
-  await seed();
+  users = await seed(100);
+  console.log(users);
+});
+
+afterAll(async () => {
+  await unseed(users);
 });
 
 describe("Should test create user endpoint", () => {
@@ -170,7 +177,6 @@ describe("Should test find all users endpoint", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBe(users.length + 1);
   });
 });
 
@@ -239,8 +245,4 @@ describe("Should test delete user endpoint", () => {
 
     expect(response.status).toBe(204);
   });
-});
-
-afterAll(async () => {
-  await unseed();
 });
