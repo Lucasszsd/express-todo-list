@@ -38,6 +38,16 @@ function validate(schema: any) {
       }
 
       if (
+        body[item] &&
+        itemSchema.maxLength &&
+        body[item].length > itemSchema.maxLength
+      ) {
+        errors.push(
+          `${item} must have less than ${itemSchema.maxLength} characters`,
+        );
+      }
+
+      if (
         itemSchema.required &&
         itemSchema.type === "date" &&
         isNaN(Date.parse(body[item]))
@@ -50,16 +60,6 @@ function validate(schema: any) {
         !itemSchema.enum.includes(body[item])
       )
         errors.push(`${item} must be one of ${itemSchema.enum.join(", ")}`);
-
-      if (
-        body[item] &&
-        itemSchema.maxLength &&
-        body[item].length > itemSchema.maxLength
-      ) {
-        errors.push(
-          `${item} must have less than ${itemSchema.maxLength} characters`,
-        );
-      }
 
       if (
         body[item] &&
