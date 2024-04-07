@@ -1,18 +1,28 @@
-import { describe, expect, it } from "@jest/globals";
+//faltou adicionar o teste do payload de update
 import * as request from "supertest";
 import app from "../src/app";
+import { seed, unseed, users } from "./seeds/user.seed";
 
-describe("Should test user endpoints", () => {
-  let id = "";
-  let accessToken = "";
+let id = "";
+let accessToken = "";
+
+beforeAll(async () => {
+  await seed();
+});
+
+describe("Should test create user endpoint", () => {
+  const createUserPayload = {
+    name: "Matheus Teste",
+    email: "matheus@mail.com",
+    password: "matheus123",
+    weight: 80,
+  };
 
   it("should create user with valid credentals", async () => {
-    const response = await request.default(app).post("/signup").send({
-      name: "matheus",
-      email: "matheus@mail.com",
-      password: "matheus123",
-      weight: 80,
-    });
+    const response = await request
+      .default(app)
+      .post("/signup")
+      .send(createUserPayload);
 
     id = response.body.user.id;
     accessToken = response.body.access_token;
@@ -26,17 +36,110 @@ describe("Should test user endpoints", () => {
     expect(response.body.user.updatedAt).toBeDefined();
   });
 
-  it("should throw bad request when user with same email already exists", async () => {
-    const response = await request.default(app).post("/signup").send({
-      name: "matheus",
-      email: "matheus@mail.com",
-      password: "matheus1",
-      weight: 100,
-    });
+  it("should throw conflict exception when user with same email already exists", async () => {
+    const response = await request
+      .default(app)
+      .post("/signup")
+      .send(createUserPayload);
 
     expect(response.status).toBe(409);
   });
 
+  it("should throw bad request when creating user with no body", async () => {
+    const noPayloadResponse = await request
+      .default(app)
+      .post("/signup")
+      .send({});
+
+    expect(noPayloadResponse.status).toBe(400);
+    expect(noPayloadResponse.body.message).toBe(
+      "name is required, email is required, password is required, weight is required",
+    );
+  });
+
+  it("should throw bad request when creating user with invalid email", async () => {
+    const invalidEmailResponse = await request
+      .default(app)
+      .post("/signup")
+      .send({
+        name: "Matheus Teste",
+        email: "matheusmail.com",
+        password: "matheus123",
+        weight: 80,
+      });
+
+    expect(invalidEmailResponse.status).toBe(400);
+    expect(invalidEmailResponse.body.message).toBe(
+      "email must be a valid email",
+    );
+  });
+
+  it("should throw bad request when creating user with invalid weight", async () => {
+    const invalidMinWeightResponse = await request
+      .default(app)
+      .post("/signup")
+      .send({
+        name: "Valid Name",
+        email: "valid@mail.com",
+        password: "valid123",
+        weight: 10,
+      });
+
+    expect(invalidMinWeightResponse.status).toBe(400);
+    expect(invalidMinWeightResponse.body.message).toBe(
+      "weight must be at least 30",
+    );
+
+    const invalidMaxWeightResponse = await request
+      .default(app)
+      .post("/signup")
+      .send({
+        name: "Valid Name",
+        email: "valid@mail.com",
+        password: "valid123",
+        weight: 301,
+      });
+
+    expect(invalidMaxWeightResponse.status).toBe(400);
+    expect(invalidMaxWeightResponse.body.message).toBe(
+      "weight must be less than 300",
+    );
+  });
+
+  it("should throw bad request when creating user with invalid password", async () => {
+    const invalidMinLengthPasswordResponse = await request
+      .default(app)
+      .post("/signup")
+      .send({
+        name: "Valid Name",
+        email: "Valid@mail.com",
+        password: "123",
+        weight: 80,
+      });
+
+    expect(invalidMinLengthPasswordResponse.status).toBe(400);
+    expect(invalidMinLengthPasswordResponse.body.message).toBe(
+      "password must have at least 5 characters",
+    );
+
+    const invalidMaxLengthPasswordResponse2 = await request
+      .default(app)
+      .post("/signup")
+      .send({
+        name: "Valid Name",
+        email: "Valid@mail.com",
+        password: "012345678901234567890123456789",
+        weight: 80,
+      });
+
+    expect(invalidMaxLengthPasswordResponse2.status).toBe(400);
+    expect(invalidMaxLengthPasswordResponse2.body.message).toBe(
+      "password must have less than 25 characters",
+    );
+  });
+});
+
+describe("Should test auth user endpoints", () => {
   it("should login with right credentials", async () => {
     const response = await request
       .default(app)
@@ -45,9 +148,10 @@ describe("Should test user endpoints", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("access_token");
+    expect(response.body.access_token).toBe(accessToken);
   });
 
-  it("shouldnt login with wrong credentials", async () => {
+  it("should throw unauthorized exception login with wrong credentials", async () => {
     const response = await request
       .default(app)
       .post("/signin")
@@ -55,27 +159,88 @@ describe("Should test user endpoints", () => {
 
     expect(response.status).toBe(401);
   });
+});
 
-  it("should delete created user", async () => {
-    console.log(id);
-
+describe("Should test find all users endpoint", () => {
+  it("should find all users", async () => {
     const response = await request
       .default(app)
-      .delete(`/user/${id}`)
+      .get("/users")
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBe(users.length + 1);
+  });
+});
+
+describe("Should test find user by id endpoint", () => {
+  it("should return created user by id", async () => {
+    console.log(accessToken);
+    console.log(id);
+    const response = await request
+      .default(app)
+      .get(`/users/id/${id}`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(id);
+  });
+
+  it("should throw not found when user doesnt exist", async () => {
+    const response = await request
+      .default(app)
+      .get(`/users/id/0`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(404);
+  });
+});
+
+describe("Should test update user endpoint", () => {
+  it("should update user with valid credentals", async () => {
+    const response = await request
+      .default(app)
+      .patch(`/users/id/${id}`)
+      .send({ name: "Matheus Updated Name" })
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(id);
+    expect(response.body.name).toBe("Matheus Updated Name");
+  });
+
+  it("should throw not found when updating user with unexistant id", async () => {
+    const response = await request
+      .default(app)
+      .put(`/users/id/0`)
+      .send({ name: "Matheus Teste" })
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(404);
+  });
+});
+
+describe("Should test delete user endpoint", () => {
+  it("should throw not found when deleting user unexistant id", async () => {
+    const response = await request
+      .default(app)
+      .delete(`/users/id/0`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(404);
+  });
+
+  it("should delete created user", async () => {
+    const response = await request
+      .default(app)
+      .delete(`/users/id/${id}`)
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(response.status).toBe(204);
   });
+});
 
-  it("should find all users", async () => {});
-
-  it("should find user by id", async () => {});
-
-  it("should throw bad request when creating user with wrong parameters", async () => {});
-
-  it("should throw not found when deleting user with wrong body", async () => {});
-
-  it("should update user with valid credentals", async () => {});
-
-  it("should throw not found when updating user with wrong parameters", async () => {});
+afterAll(async () => {
+  await unseed();
 });
