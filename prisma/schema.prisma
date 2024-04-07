@@ -16,9 +16,9 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  name      String?
+  name      String
   password  String
-  weight    Float?
+  weight    Float
   tasks     Task[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
