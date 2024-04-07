@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsnd --respawn --transpile-only src/index.ts",
     "setup": "docker-compose up -d && npx prisma migrate dev",
-    "test": "jest"
+    "test": "npx prisma db push --force-reset && jest"
   },
   "keywords": [],
   "author": "",
