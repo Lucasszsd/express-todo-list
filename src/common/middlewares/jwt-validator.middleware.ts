@@ -8,6 +8,7 @@ import { asyncErrorHandler } from "./async-error-handler.middleware";
 const jwtRegex = /Bearer\s[a-zA-Z0-9-_=]+\.[a-zA-Z0-9-_=]+\.[a-zA-Z0-9-_=]+/;
 const swaggerUrls = [
   "/api/",
+  "/api",
   "/api/swagger-ui.css",
   "/api/swagger-ui-bundle.js",
   "/api/swagger-ui-standalone-preset.js",
@@ -16,6 +17,7 @@ const swaggerUrls = [
   "/api/swagger-ui.css.map",
   "/api/swagger-ui-standalone-preset.js.map",
   "/api/favicon-32x32.png",
+  "/api/favicon.ico",
 ];
 
 type jwtDecodedPayload = {

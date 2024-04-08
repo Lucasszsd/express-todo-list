@@ -1,4 +1,4 @@
-import swaggerJSDoc, { SwaggerDefinition } from "swagger-jsdoc";
+import swaggerJSDoc from "swagger-jsdoc";
 import path from "path";
 import { SwaggerUiOptions } from "swagger-ui-express";
 
