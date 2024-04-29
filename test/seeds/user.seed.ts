@@ -5,8 +5,6 @@ import { UserEntity } from "../../src/user/entities/user.entity";
 
 const prisma = new PrismaClient();
 
-type UserPayload = Prisma.UserCreateInput;
-
 const getRandomUser = async () => {
   return {
     id: v4(),

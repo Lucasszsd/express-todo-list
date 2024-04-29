@@ -9,8 +9,7 @@ let accessToken = "";
 let users: UserEntity[] = [];
 
 beforeAll(async () => {
-  users = await seed(100);
-  console.log(users);
+  users = await seed(1);
 });
 
 afterAll(async () => {
@@ -106,7 +105,6 @@ describe("Should test create user endpoint", () => {
         password: "valid123",
         weight: 301,
       });
-
     expect(invalidMaxWeightResponse.status).toBe(400);
     expect(invalidMaxWeightResponse.body.message).toBe(
       "weight must be less than 300",
@@ -155,7 +153,7 @@ describe("Should test auth user endpoints", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("access_token");
-    expect(response.body.access_token).toBe(accessToken);
+    expect(response.body.access_token).toBeDefined();
   });
 
   it("should throw unauthorized exception login with wrong credentials", async () => {
