@@ -1,14 +1,15 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import * as bcrypt from "bcrypt";
 import { v4 } from "uuid";
 import { TaskEntity } from "../../src/task/entities/task.entity";
 import { Priority, Status } from "../../src/task/entities/task.entity";
 
 const prisma = new PrismaClient();
 const userPayload = {
-  name: faker.person.fullName(),
-  email: faker.internet.email(),
-  password: faker.internet.password({ length: 10 }),
+  name: "Matheus Teste",
+  email: "guahseeuasheu@gmail.com",
+  password: bcrypt.hashSync("teste123", 10),
   weight: Math.floor(Math.random() * 300) + 30,
 };
 
@@ -51,6 +52,6 @@ export async function seed(numberOftasks: number = 3): Promise<TaskEntity[]> {
 
 export async function unseed(tasks: TaskEntity[]) {
   const ids = tasks.map((task) => task.id);
-  await prisma.task.deleteMany({ where: { id: { in: ids } } });
   await prisma.user.delete({ where: { id: tasks[0].user_id } });
+  await prisma.task.deleteMany({ where: { id: { in: ids } } });
 }

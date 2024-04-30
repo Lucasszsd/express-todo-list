@@ -1,13 +1,17 @@
-//faltou adicionar o teste do payload de update
 import * as request from "supertest";
 import app from "../src/app";
 import { seed, unseed } from "./seeds/task.seed";
-import { UserEntity } from "../src/user/entities/user.entity";
 import { TaskEntity } from "../src/task/entities/task.entity";
+import { CreateTaskDto, createTaskDto } from "../src/task/dto";
+import { CreateCategoryDto } from "../src/category/dto";
+import { Color } from "../src/category/entities/category.entity";
+import { Priority, Status } from "@prisma/client";
 
-let id = "";
-let accessToken = "";
+let id: string;
+let accessToken: string;
 let tasks: TaskEntity[];
+let createdTaskId: string;
+let categoryId: string;
 
 beforeAll(async () => {
   tasks = await seed(120);
@@ -15,6 +19,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await request.default(app).post(`/users/id/${id}`);
   await unseed(tasks);
 });
 
@@ -25,7 +30,6 @@ const createUserPayload = {
   weight: 80,
 };
 describe("Should test task endpoints", () => {
-  // Login or create user before running the tests
   beforeAll(async () => {
     const response = await request
       .default(app)
@@ -38,8 +42,6 @@ describe("Should test task endpoints", () => {
     accessToken = response.body.access_token;
   });
 
-  let createdTaskId: string; // Variable to store the ID of the created task
-
   it("should create task with valid credentials", async () => {
     const response = await request
       .default(app)
@@ -47,15 +49,30 @@ describe("Should test task endpoints", () => {
       .send({
         title: "test",
         description: "test",
-        priority: "LOW",
-        status: "PENDING",
+        priority: Priority.LOW,
+        category_id: categoryId,
+        status: Status.PENDING,
         user_id: id,
-        conclusion: new Date().toISOString(),
-      })
+        conclusion: new Date(),
+      } as CreateTaskDto)
       .set("Authorization", `Bearer ${accessToken}`);
 
+    console.log(response.body);
+
     expect(response.status).toBe(201);
-    createdTaskId = response.body.id; // Store the ID of the created task
+    createdTaskId = response.body.id;
+  });
+
+  it("should create category to test tasks with", async () => {
+    const response = await request
+      .default(app)
+      .post("/category")
+      .send({
+        color: Color.GREEN,
+        name: "Teste",
+      } as CreateCategoryDto);
+
+    categoryId = response.body.id;
   });
 
   it("should throw bad request when creating task with missing required fields", async () => {
@@ -107,7 +124,7 @@ describe("Should test task endpoints", () => {
 
   it("should throw bad request when creating task with future conclusion date", async () => {
     const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 1); // Adding one day to the current date
+    futureDate.setDate(futureDate.getDate() + 1);
     const response = await request
       .default(app)
       .post("/tasks")
