@@ -15,12 +15,38 @@ let categoryId: string;
 
 beforeAll(async () => {
   tasks = await seed(120);
-  console.log(tasks);
+  const response = await request
+    .default(app)
+    .post("/signup")
+    .send(createUserPayload);
+
+  id = response.body.user.id;
+  accessToken = response.body.access_token;
+
+  const res2 = await request
+    .default(app)
+    .post("/category")
+    .send({
+      color: Color.GREEN,
+      name: "Teste",
+    } as CreateCategoryDto)
+    .set("Authorization", `Bearer ${accessToken}`);
+
+  categoryId = res2.body.id;
 });
 
 afterAll(async () => {
-  await request.default(app).post(`/users/id/${id}`);
+  await request
+    .default(app)
+    .delete(`/users/id/${id}`)
+    .set("Authorization", `Bearer ${accessToken}`);
+
   await unseed(tasks);
+
+  await request
+    .default(app)
+    .delete(`/category/id/${categoryId}`)
+    .set("Authorization", `Bearer ${accessToken}`);
 });
 
 const createUserPayload = {
@@ -30,18 +56,6 @@ const createUserPayload = {
   weight: 80,
 };
 describe("Should test task endpoints", () => {
-  beforeAll(async () => {
-    const response = await request
-      .default(app)
-      .post("/signup")
-      .send(createUserPayload);
-
-    console.log(response.body);
-
-    id = response.body.user.id;
-    accessToken = response.body.access_token;
-  });
-
   it("should create task with valid credentials", async () => {
     const response = await request
       .default(app)
@@ -57,22 +71,8 @@ describe("Should test task endpoints", () => {
       } as CreateTaskDto)
       .set("Authorization", `Bearer ${accessToken}`);
 
-    console.log(response.body);
-
     expect(response.status).toBe(201);
     createdTaskId = response.body.id;
-  });
-
-  it("should create category to test tasks with", async () => {
-    const response = await request
-      .default(app)
-      .post("/category")
-      .send({
-        color: Color.GREEN,
-        name: "Teste",
-      } as CreateCategoryDto);
-
-    categoryId = response.body.id;
   });
 
   it("should throw bad request when creating task with missing required fields", async () => {
@@ -168,27 +168,27 @@ describe("Should test task endpoints", () => {
   it("should get a task by ID", async () => {
     const response = await request
       .default(app)
-      .get(`/tasks/${id}`)
+      .get(`/tasks/id/${createdTaskId}`)
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(200);
-    expect(response.body.id).toBe(id);
+    expect(response.body.id).toBe(createdTaskId);
   });
 
   it("should update a task with valid credentials", async () => {
     const response = await request
       .default(app)
-      .patch(`/tasks/${id}`)
+      .patch(`/tasks/id/${createdTaskId}`)
       .send({ title: "Updated Title" })
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(200);
-    expect(response.body.id).toBe(id);
+    expect(response.body.id).toBe(createdTaskId);
     expect(response.body.title).toBe("Updated Title");
   });
 
   it("should throw not found when updating task with unexistent id", async () => {
     const response = await request
       .default(app)
-      .patch(`/tasks/0`)
+      .patch(`/tasks/id/0`)
       .send({ title: "Updated Title" })
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(404);
@@ -197,7 +197,7 @@ describe("Should test task endpoints", () => {
   it("should delete a task by ID", async () => {
     const response = await request
       .default(app)
-      .delete(`/tasks/${id}`)
+      .delete(`/tasks/id/${createdTaskId}`)
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(204);
   });
@@ -205,7 +205,7 @@ describe("Should test task endpoints", () => {
   it("should throw not found when deleting task with unexistent id", async () => {
     const response = await request
       .default(app)
-      .delete(`/tasks/0`)
+      .delete(`/tasks/id/0`)
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(404);
   });

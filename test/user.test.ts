@@ -9,7 +9,7 @@ let accessToken = "";
 let users: UserEntity[] = [];
 
 beforeAll(async () => {
-  users = await seed(1);
+  users = await seed(120);
 });
 
 afterAll(async () => {
@@ -180,8 +180,6 @@ describe("Should test find all users endpoint", () => {
 
 describe("Should test find user by id endpoint", () => {
   it("should return created user by id", async () => {
-    console.log(accessToken);
-    console.log(id);
     const response = await request
       .default(app)
       .get(`/users/id/${id}`)
