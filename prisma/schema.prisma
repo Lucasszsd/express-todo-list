@@ -31,7 +31,7 @@ model Task {
   priority        Priority  @default(LOW)
   status          Status    @default(PENDING)
   category_id     String?
-  category        Category? @relation(fields: [category_id], references: [id])
+  category        Category? @relation(fields: [category_id], references: [id], onDelete: Cascade)
   conclusion      DateTime?
   user_id         String
   user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
