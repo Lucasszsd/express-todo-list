@@ -34,7 +34,6 @@ export const createTaskDto = {
   },
   category_id: {
     type: "string",
-    required: "category_id is required",
   },
   user_id: {
     type: "string",

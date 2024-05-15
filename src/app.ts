@@ -25,7 +25,7 @@ export class App {
 
   private middlewares() {
     this.app.use(express.json());
-    this.app.use(jwtValidator(["/signup", "/signin"]));
+    // this.app.use(jwtValidator(["/signup", "/signin"]));
   }
 
   private routes() {
