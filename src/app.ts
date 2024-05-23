@@ -3,12 +3,8 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { opts, specs } from "./common/swagger/swagger-config";
 import { errorMiddleware } from "./common/middlewares/error-handler.middleware";
-import userRoutes from "./user/user.router";
 import taskRoutes from "./task/task.router";
 import appRoutes from "./routes";
-import categoryRoutes from "./category/category.router";
-import authRoutes from "./auth/auth.router";
-import { jwtValidator } from "./common/middlewares/jwt-validator.middleware";
 
 const prismaClient = new PrismaClient();
 
@@ -25,16 +21,12 @@ export class App {
 
   private middlewares() {
     this.app.use(express.json());
-    // this.app.use(jwtValidator(["/signup", "/signin"]));
   }
 
   private routes() {
     this.app.use("/api", swaggerUi.serve, swaggerUi.setup(specs, opts));
     this.app.use(appRoutes);
-    this.app.use(userRoutes);
     this.app.use(taskRoutes);
-    this.app.use(categoryRoutes);
-    this.app.use(authRoutes);
   }
 
   private async database() {

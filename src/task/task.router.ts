@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
 import { asyncErrorHandler } from "../common/middlewares/async-error-handler.middleware";
 import { TaskController, TaskRepository, TaskService } from "./index";
-import { validate } from "../common/middlewares/validation.middleware";
 import { createTaskDto, updateTaskDto } from "./dto";
 
 const taskController = new TaskController(
@@ -21,8 +20,6 @@ const taskRoutes = Router();
  * /tasks:
  *   post:
  *     tags: [Tasks]
- *     security:
- *      - bearerAuth: []
  *     summary: Cria uma tarefa nova
  *     requestBody:
  *       required: true
@@ -40,7 +37,6 @@ const taskRoutes = Router();
  * */
 taskRoutes.post(
   "/tasks",
-  validate(createTaskDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.create(req, res);
   }),
@@ -59,21 +55,6 @@ taskRoutes.post(
  *         name: status
  *         required: false
  *         description: Filtrar tarefas por status
- *         schema:
- *           type: string
- *           enum: [PENDING, DOING, DONE]
- *       - in: query
- *         name: user_id
- *         required: false
- *         description: Filtro por user_id
- *         schema:
- *           type: string
- *       - in: query
- *         name: category_id
- *         required: false
- *         description: Filtrar tarefas por categoria
- *         schema:
- *           type: string
  *       - in: query
  *         name: startConclusionDate
  *         required: false
@@ -137,34 +118,6 @@ taskRoutes.get(
 
 /**
  * @swagger
- * /tasks/average-conclusion:
- *   get:
- *     summary: Retorna a média de conclusão de tarefas
- *     tags: [Tasks]
- *     security:
- *      - bearerAuth: []
- *     responses:
- *       200:
- *         description: Média de conclusão de tarefas retornada com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 average:
- *                   type: number
- *                   format: float
- *                   example: 0.5
- */
-taskRoutes.get(
-  "/tasks/average-conclusion",
-  asyncErrorHandler(async (req: Request, res: Response) => {
-    await taskController.getTaskConclusionAverage(req, res);
-  }),
-);
-
-/**
- * @swagger
  * /tasks/longest-description:
  *   get:
  *     summary: Retorna a tarefa com a maior descrição
@@ -218,7 +171,6 @@ taskRoutes.get(
  * */
 taskRoutes.patch(
   "/tasks/id/:id",
-  validate(updateTaskDto),
   asyncErrorHandler(async (req: Request, res: Response) => {
     await taskController.update(req, res);
   }),
