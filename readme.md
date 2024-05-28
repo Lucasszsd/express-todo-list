@@ -19,8 +19,9 @@ Este é um API construída com **Node.js**, **Typescript**, **Express**, **Prism
 ## Inicialização
 
 1. Configure seu ambiente criando um arquivo `.env` (você pode copiar o conteúdo de `.env.example` e colá-lo no novo arquivo).
-2. Certifique-se de que o Docker está em execução e execute `npm run setup` no terminal.
-3. Para iniciar a aplicação, execute `npm run start`.
+2. Rode o comando `npm i`.
+3. Certifique-se de que o Docker está em execução e execute `npm run setup` no terminal.
+4. Para iniciar a aplicação, execute `npm run start`.
 
 ## Rotas
 
