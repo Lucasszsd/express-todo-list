@@ -16,6 +16,13 @@ Este é um API construída com **Node.js**, **Typescript**, **Express**, **Prism
 4. Para iniciar a aplicação, execute `npm run start`.
 5. Para acessar a documentação da API, acesse `http://localhost:3000/api`.
 
+## Acessar banco de dados
+
+É possível verificar os dados salvos no banco através do Terminal do container docker, basta acessar o terminal do container "express-todo-list-db-*" e rodar os comandos:
+
+1. `psql -d taskdb -U admin` para acessar o banco de dados. OBS: devem estar de acordo com o configurado no `.env`
+2. `select * from public."Task";` para acessar os dados salvos no banco Task
+
 ## Rotas
 
 ### Tarefas (Tasks)
