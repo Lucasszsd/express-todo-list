@@ -19,11 +19,6 @@ export class TaskController {
     return res.status(200).json(task);
   }
 
-  async getTaskConclusionAverage(req: Request, res: Response) {
-    const average = await this.taskService.getTaskConclusionAverage();
-    return res.status(200).json(average);
-  }
-
   async getLongestDescription(req: Request, res: Response) {
     const task = await this.taskService.getLongestDescription();
     return res.status(200).json(task);

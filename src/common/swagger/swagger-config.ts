@@ -14,15 +14,8 @@ const options = {
   },
 
   apis: [
-    path.resolve(__dirname, "../../auth/auth.router.ts"),
-    path.resolve(__dirname, "../../auth/dto/login.dto.ts"),
-    path.resolve(__dirname, "../../user/user.router.ts"),
-    path.resolve(__dirname, "../../user/entities/user.entity.ts"),
     path.resolve(__dirname, "../../task/task.router.ts"),
     path.resolve(__dirname, "../../task/entities/task.entity.ts"),
-    path.resolve(__dirname, "../../category/category.router.ts"),
-    path.resolve(__dirname, "../../category/entities/category.entity.ts"),
-    path.resolve(__dirname, "../../common/security/jwt-token.entity.ts"),
   ],
 } as swaggerJSDoc.Options;
 

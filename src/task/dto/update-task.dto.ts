@@ -9,21 +9,4 @@ export const updateTaskDto = {
   description: {
     type: "string",
   },
-  priority: {
-    type: "string",
-    enum: ["LOW", "MEDIUM", "HIGH"],
-  },
-  status: {
-    type: "string",
-    enum: ["PENDING", "DOING", "DONE"],
-  },
-  category_id: {
-    type: "string",
-  },
-  user_id: {
-    type: "string",
-  },
-  conclusion: {
-    type: "date",
-  },
 };
